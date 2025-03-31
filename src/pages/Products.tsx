@@ -19,13 +19,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   MoreHorizontal, 
-  Plus, 
   Search, 
   Edit, 
   Trash2,
   Eye,
   Tag
 } from "lucide-react";
+import { AddProductDialog } from "@/components/products/AddProductDialog";
+import { Product } from "@/types/product";
 
 // Mock data for products
 const MOCK_PRODUCTS = [
@@ -113,18 +114,19 @@ const MOCK_PRODUCTS = [
 
 const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState(MOCK_PRODUCTS);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(MOCK_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
 
   useEffect(() => {
     document.title = "Product Management | Grocery Commerce Hub";
     
     // Filter products based on search query
     if (searchQuery.trim() === "") {
-      setFilteredProducts(MOCK_PRODUCTS);
+      setFilteredProducts(products);
     } else {
       const lowercaseQuery = searchQuery.toLowerCase();
       setFilteredProducts(
-        MOCK_PRODUCTS.filter(
+        products.filter(
           (product) =>
             product.name.toLowerCase().includes(lowercaseQuery) ||
             product.category.toLowerCase().includes(lowercaseQuery) ||
@@ -132,11 +134,15 @@ const Products = () => {
         )
       );
     }
-  }, [searchQuery]);
+  }, [searchQuery, products]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // Already handled in useEffect
+  };
+
+  const handleAddProduct = (newProduct: Product) => {
+    setProducts([newProduct, ...products]);
   };
 
   const getStatusBadgeColor = (status: string) => {
@@ -180,10 +186,7 @@ const Products = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </form>
-        <Button className="bg-dashboard-blue hover:bg-dashboard-blue/90">
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Product
-        </Button>
+        <AddProductDialog onProductAdded={handleAddProduct} />
       </div>
 
       <div className="rounded-md border">
