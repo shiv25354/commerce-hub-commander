@@ -3,8 +3,9 @@ import { useEffect } from "react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ChartWrapper } from "@/components/dashboard/ChartWrapper";
 import { OrdersWrapper } from "@/components/dashboard/OrdersWrapper";
-import { ShoppingCart, Package, DollarSign, Users } from "lucide-react";
+import { ShoppingCart, Package, DollarSign, Users, AlertTriangle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { InventoryAlerts } from "@/components/dashboard/InventoryAlerts";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -56,6 +57,10 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <ChartWrapper className="md:col-span-2 lg:col-span-4" />
         <OrdersWrapper className="md:col-span-2 lg:col-span-3" />
+      </div>
+      
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <InventoryAlerts className="md:col-span-1 lg:col-span-1" />
       </div>
     </div>
   );
