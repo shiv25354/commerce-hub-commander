@@ -11,4 +11,5 @@ export interface User {
   lastLogin: string;
 }
 
-export { UserRole };
+// Use 'export type' instead of 'export' for re-exporting type definitions
+export type { UserRole };
