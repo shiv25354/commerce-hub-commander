@@ -30,7 +30,13 @@ export const AddProductDialog = ({ onProductAdded }: AddProductDialogProps) => {
       // For now, we'll create a mock product with a generated ID
       const newProduct: Product = {
         id: Date.now().toString(),
-        ...data,
+        name: data.name,
+        sku: data.sku,
+        category: data.category,
+        price: data.price,
+        stock: data.stock,
+        image: data.image || '',
+        description: data.description,
         status: data.stock > 10 ? 'in-stock' : data.stock > 0 ? 'low-stock' : 'out-of-stock'
       };
       
