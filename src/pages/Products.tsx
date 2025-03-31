@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ import { AddProductDialog } from "@/components/products/AddProductDialog";
 import { Product } from "@/types/product";
 
 // Mock data for products
-const MOCK_PRODUCTS = [
+const MOCK_PRODUCTS: Product[] = [
   {
     id: '1',
     name: 'Organic Bananas',

@@ -12,9 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ProductForm, ProductFormValues } from "./ProductForm";
 import { useToast } from "@/hooks/use-toast";
+import { Product } from "@/types/product";
 
 interface AddProductDialogProps {
-  onProductAdded: (product: any) => void;
+  onProductAdded: (product: Product) => void;
 }
 
 export const AddProductDialog = ({ onProductAdded }: AddProductDialogProps) => {
@@ -27,10 +28,10 @@ export const AddProductDialog = ({ onProductAdded }: AddProductDialogProps) => {
     try {
       // In a real app, this would be an API call
       // For now, we'll create a mock product with a generated ID
-      const newProduct = {
+      const newProduct: Product = {
         id: Date.now().toString(),
         ...data,
-        status: data.stock > 0 ? 'in-stock' : 'out-of-stock'
+        status: data.stock > 10 ? 'in-stock' : data.stock > 0 ? 'low-stock' : 'out-of-stock'
       };
       
       // Simulate API delay
