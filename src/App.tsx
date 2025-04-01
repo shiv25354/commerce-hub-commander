@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Users from "./pages/Users";
 import Products from "./pages/Products";
 import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import LoginForm from "./components/auth/LoginForm";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/users" element={<Users />} />
               <Route path="/products" element={<Products />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/orders/:orderId" element={<OrderDetail />} />
               
               {/* Redirect /dashboard to / */}
               <Route path="/dashboard" element={<Navigate to="/" replace />} />

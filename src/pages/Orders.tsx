@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -26,87 +27,8 @@ import {
   Check,
   Calendar
 } from "lucide-react";
-
-// Mock data for orders
-const MOCK_ORDERS = [
-  {
-    id: 'ORD-8721',
-    customer: 'John Doe',
-    email: 'john.doe@example.com',
-    date: '2023-10-15T08:30:00',
-    items: 5,
-    total: 145.99,
-    status: 'delivered',
-    paymentStatus: 'paid',
-    address: '123 Main St, New York, NY 10001',
-  },
-  {
-    id: 'ORD-8720',
-    customer: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    date: '2023-10-15T10:15:00',
-    items: 2,
-    total: 32.50,
-    status: 'processing',
-    paymentStatus: 'paid',
-    address: '456 Park Ave, Boston, MA 02108',
-  },
-  {
-    id: 'ORD-8719',
-    customer: 'Michael Brown',
-    email: 'michael.b@example.com',
-    date: '2023-10-14T16:45:00',
-    items: 8,
-    total: 215.75,
-    status: 'shipped',
-    paymentStatus: 'paid',
-    address: '789 Pine St, San Francisco, CA 94102',
-  },
-  {
-    id: 'ORD-8718',
-    customer: 'Emily Wilson',
-    email: 'emily.w@example.com',
-    date: '2023-10-14T12:30:00',
-    items: 1,
-    total: 24.99,
-    status: 'pending',
-    paymentStatus: 'unpaid',
-    address: '101 Beach Rd, Miami, FL 33139',
-  },
-  {
-    id: 'ORD-8717',
-    customer: 'Robert Garcia',
-    email: 'r.garcia@example.com',
-    date: '2023-10-13T09:20:00',
-    items: 4,
-    total: 87.45,
-    status: 'delivered',
-    paymentStatus: 'paid',
-    address: '222 Oak St, Chicago, IL 60601',
-  },
-  {
-    id: 'ORD-8716',
-    customer: 'Lisa Chen',
-    email: 'lisa.chen@example.com',
-    date: '2023-10-13T08:05:00',
-    items: 3,
-    total: 65.30,
-    status: 'cancelled',
-    paymentStatus: 'refunded',
-    address: '333 Maple Ave, Seattle, WA 98101',
-  },
-  {
-    id: 'ORD-8715',
-    customer: 'David Kim',
-    email: 'david.kim@example.com',
-    date: '2023-10-12T14:10:00',
-    items: 6,
-    total: 154.80,
-    status: 'delivered',
-    paymentStatus: 'paid',
-    address: '444 Elm St, Dallas, TX 75201',
-  },
-];
+import { MOCK_ORDERS } from "@/components/orders/mockOrders";
+import { toast } from "sonner";
 
 const Orders = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -147,6 +69,10 @@ const Orders = () => {
         return 'bg-purple-100 text-purple-800 hover:bg-purple-100';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100';
+      case 'ready-to-ship':
+        return 'bg-indigo-100 text-indigo-800 hover:bg-indigo-100';
+      case 'out-for-delivery':
+        return 'bg-orange-100 text-orange-800 hover:bg-orange-100';
       case 'cancelled':
         return 'bg-red-100 text-red-800 hover:bg-red-100';
       default:
@@ -180,6 +106,28 @@ const Orders = () => {
 
   const formatCurrency = (amount: number) => {
     return `$${amount.toFixed(2)}`;
+  };
+
+  const handleQuickAction = (orderId: string, action: string) => {
+    let message = "";
+    
+    switch (action) {
+      case "process":
+        message = "Order marked as processing";
+        break;
+      case "ship":
+        message = "Order marked as shipped";
+        break;
+      case "cancel":
+        message = "Order has been cancelled";
+        break;
+      default:
+        break;
+    }
+    
+    if (message) {
+      toast.success(message);
+    }
   };
 
   return (
@@ -245,7 +193,7 @@ const Orders = () => {
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline" className={getOrderStatusBadgeColor(order.status)}>
-                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                    {order.status.charAt(0).toUpperCase() + order.status.slice(1).replace(/-/g, ' ')}
                   </Badge>
                 </TableCell>
                 <TableCell className="hidden lg:table-cell">
@@ -261,24 +209,29 @@ const Orders = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        <span>View Details</span>
+                      <DropdownMenuItem asChild>
+                        <Link to={`/orders/${order.id}`}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          <span>View Details</span>
+                        </Link>
                       </DropdownMenuItem>
                       {order.status === 'pending' && (
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleQuickAction(order.id, "process")}>
                           <Check className="mr-2 h-4 w-4" />
                           <span>Process Order</span>
                         </DropdownMenuItem>
                       )}
-                      {(order.status === 'processing' || order.status === 'pending') && (
-                        <DropdownMenuItem>
+                      {(order.status === 'processing' || order.status === 'ready-to-ship') && (
+                        <DropdownMenuItem onClick={() => handleQuickAction(order.id, "ship")}>
                           <Truck className="mr-2 h-4 w-4" />
                           <span>Mark as Shipped</span>
                         </DropdownMenuItem>
                       )}
                       {order.status !== 'cancelled' && order.status !== 'delivered' && (
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={() => handleQuickAction(order.id, "cancel")}
+                        >
                           <X className="mr-2 h-4 w-4" />
                           <span>Cancel Order</span>
                         </DropdownMenuItem>
